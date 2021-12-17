@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 import server from "utils/server";
 import Item from "./Item";
 import { FileI } from "./Upload";
@@ -19,13 +18,35 @@ const List = styled.ul`
   flex-direction: column;
 `;
 
+const anim = keyframes`
+  0%{
+    opacity: 0;
+  }
+
+  100%{
+    opacity: 1;
+  }
+`
+
+const ListItem = styled.li`
+  animation: ${anim} 0.5s linear;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 20px;
+  :hover{
+    background: #d7e6f1;
+  }
+`
+
 const Container = styled.div`
   flex: 1;
-  padding: 40px 0;
+  padding-bottom: 40px;
   background-color: #fbfbfb;
   overflow-y: auto;
   height: 80%;
 `;
+
+
 
 export default ({ files, setFiles }: Props) => {
   const removeItem = async (name: string) => {
@@ -40,14 +61,14 @@ export default ({ files, setFiles }: Props) => {
       {files.length ? (
         <List>
           {files.map((file, ind) => (
-            <li key={ind}>
+            <ListItem key={ind}>
               <Item
                 removeElem={() => {
                   removeItem(file.name);
                 }}
                 file={file}
               />
-            </li>
+            </ListItem>
           ))}
         </List>
       ) : (

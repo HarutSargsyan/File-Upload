@@ -1,7 +1,8 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { ReactComponent as Uplaod } from "../assets/upload.svg";
+import DeleteImage from "assets/close-button.png";
 import server from "../utils/server";
 
 const Browse = styled.button`
@@ -36,14 +37,14 @@ const anim = keyframes`
 `;
 
 interface IconProps {
-  isstop: boolean;
+  isstop: string;
 }
 
 const StyledIcon = styled(Uplaod)<IconProps>`
   cursor: pointer;
   animation: ${anim} 1s infinite;
   animation-play-state: ${(props) =>
-    props.isstop ? "paused" : "running"};
+    props.isstop == "true" ? "paused" : "running"};
 `;
 
 export interface FileI {
@@ -77,11 +78,16 @@ export default ({ setFiles, files }: Props) => {
       formData.append("photo", file);
       const { data } = await server.post("/upload", formData);
       const type = data.type;
-      data.type = type.split("/")[1];
       setFile(null);
+      if (!type) {
+        setError("File type isn't supported");
+        return;
+      }
+      data.type = type.split("/")[1];
       setFiles([data, ...files]);
+    } else {
+      setError("No file selected");
     }
-    setError("No file selected");
   };
 
   return (
@@ -95,14 +101,21 @@ export default ({ setFiles, files }: Props) => {
       />
 
       <StyledIcon
-        isstop={!!file}
+        isstop={`${!!file}`}
         onClick={() => {
           ref.current?.click();
         }}
       />
       <Browse type="submit">Submit</Browse>
-      {error && <p>{error}</p>}
-      <p>{file?.name}</p>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {file?.name && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-evenly" }}>
+          <p>{file?.name}</p>
+          <img onClick={() => {
+            setFile(null);
+          }} style={{ marginLeft: "10px", cursor: "pointer" }} width="20px" height="20px" src={DeleteImage} alt="Close-icon" />
+        </div>
+      )}
     </Form>
   );
 };

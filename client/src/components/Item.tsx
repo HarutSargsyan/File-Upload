@@ -20,6 +20,7 @@ const Avatar = styled.span`
   border-radius: 50%;
   border: 1px solid#2F80EC;
   width: 50px;
+  height: 50px;
   aspect-ratio: 1/1;
   background-color: #d7e6f1;
   font: 200 normal 1.3rem;
@@ -35,6 +36,7 @@ const Item = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   margin-right: 25px;
+  transition: opacity 0.5s ease-in-out;
 `;
 
 const Text = styled.p`
@@ -47,7 +49,6 @@ const ContentContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: 20px;
 `;
 
 const ShowWrapper = styled.div`
