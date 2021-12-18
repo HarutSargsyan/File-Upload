@@ -2,7 +2,7 @@ import cors from "cors";
 require("dotenv").config();
 
 import express from "express";
-import router from "./routes/upload";
+import router from "./src/routes/upload";
 import morgan from "morgan";
 import path from "path";
 
@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.use(express.static(path.join(__dirname, "..", "public")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/upload", router);
