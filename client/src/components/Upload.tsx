@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRef } from "react";
 import styled, { keyframes } from "styled-components";
+import { Spinner } from "./ListItems";
 import { ReactComponent as Uplaod } from "../assets/upload.svg";
 import DeleteImage from "assets/close-button.png";
 import server from "../utils/server";
@@ -52,6 +53,7 @@ export interface FileI {
   size: number;
   type: string;
   src: string;
+  isRemoving?: boolean;
 }
 
 interface Props {
@@ -62,6 +64,7 @@ interface Props {
 export default ({ setFiles, files }: Props) => {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
+  const [isPending, setIsPending] = useState<boolean>(false);
 
   const ref = useRef<HTMLInputElement>(null);
 
@@ -74,17 +77,25 @@ export default ({ setFiles, files }: Props) => {
     e.preventDefault();
 
     if (file) {
+      const fileNames = files.map((file) => file.name);
+      if (fileNames.includes(file.name)) {
+        setError("File exists with the same name");
+        setFile(null);
+        return;
+      }
+      setFile(null);
+      setIsPending(true);
       const formData = new FormData();
       formData.append("photo", file);
       const { data } = await server.post("/upload", formData);
       const type = data.type;
-      setFile(null);
       if (!type) {
         setError("File type isn't supported");
         return;
       }
       data.type = type.split("/")[1];
       setFiles([data, ...files]);
+      setIsPending(false);
     } else {
       setError("No file selected");
     }
@@ -109,13 +120,27 @@ export default ({ setFiles, files }: Props) => {
       <Browse type="submit">Submit</Browse>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {file?.name && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-evenly" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-evenly",
+          }}
+        >
           <p>{file?.name}</p>
-          <img onClick={() => {
-            setFile(null);
-          }} style={{ marginLeft: "10px", cursor: "pointer" }} width="20px" height="20px" src={DeleteImage} alt="Close-icon" />
+          <img
+            onClick={() => {
+              setFile(null);
+            }}
+            style={{ marginLeft: "10px", cursor: "pointer" }}
+            width="20px"
+            height="20px"
+            src={DeleteImage}
+            alt="Close-icon"
+          />
         </div>
       )}
+      {isPending && <Spinner style={{ marginTop: "20px" }} />}
     </Form>
   );
 };

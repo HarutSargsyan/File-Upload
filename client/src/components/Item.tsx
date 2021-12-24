@@ -12,7 +12,10 @@ interface Props {
 
 const DeleteIcon = styled(Delete)`
   margin-top: 8px;
+  margin-left: 5px;
   cursor: pointer;
+  width: 20px;
+  height: 20px;
 `;
 
 const Avatar = styled.span`
@@ -30,13 +33,21 @@ const Avatar = styled.span`
   align-items: center;
 `;
 
-const Item = styled.div`
+interface ItemProps {
+  isRemoving: boolean | undefined;
+}
+
+const Item = styled.div<ItemProps>`
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-right: 25px;
-  transition: opacity 0.5s ease-in-out;
+  pointer-events: ${(props) =>
+    props.isRemoving ? "none" : "auto"};
+  transition: ${(props) =>
+    props.isRemoving ? "opacity 0.5s ease-in-out" : "none"};
+  opacity: ${(props) => (props.isRemoving ? 0.3 : 1)};
 `;
 
 const Text = styled.p`
@@ -71,13 +82,11 @@ const SecondaryText = styled.p`
 `;
 
 export default ({ file, removeElem }: Props) => {
-  
-
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
     <>
-      <Item onClick={() => setIsModalOpen(true)}>
+      <Item isRemoving={file.isRemoving} onClick={() => setIsModalOpen(true)}>
         <ContentContainer>
           <Avatar>{formatType(file.type)}</Avatar>
           <div style={{ display: "flex", flexDirection: "column" }}>
