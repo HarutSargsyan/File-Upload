@@ -2,8 +2,8 @@ import { ReactComponent as Delete } from "../assets/delete.svg";
 import styled from "styled-components";
 import { FileI } from "./Upload";
 import { formatName, formatType, sizeToMb } from "../utils/functions";
-import { ReactComponent as CloseIcon } from "../assets/cancel.svg";
 import { useState } from "react";
+import ImageModal from "./ImageModal";
 
 interface Props {
   file: FileI;
@@ -101,22 +101,7 @@ export default ({ file, removeElem }: Props) => {
           }}
         />
       </Item>
-      {isModalOpen && (
-        <ShowWrapper>
-          <img style={{ maxHeight: "600px" }} src={file.src} alt="image" />
-          <CloseIcon
-            onClick={() => {
-              setIsModalOpen(false);
-            }}
-            style={{
-              position: "absolute",
-              top: "40px",
-              right: "40px",
-              cursor: "pointer",
-            }}
-          />
-        </ShowWrapper>
-      )}
+      {isModalOpen && <ImageModal src={file.src} setIsModalOpen={setIsModalOpen} />}
     </>
   );
 };
